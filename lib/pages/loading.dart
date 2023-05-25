@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:location_app/services/world_time.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class Loading extends StatefulWidget {
   const Loading({super.key});
@@ -10,8 +10,6 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-  String time = 'loading';
-
   void setupWorldTime() async {
     // WordlTime was initialized by passing the object props
     // into it , the time was exception cos an instance has been
@@ -19,14 +17,16 @@ class _LoadingState extends State<Loading> {
     WorldTime instance = WorldTime(
       location: 'Berlin',
       flag: 'germany.png',
-      url: 'Europe/London',
+      url: 'Europe/Berlin',
     );
     await instance.getTime();
-    if (kDebugMode) {
-      print(instance.time);
-    }
-    setState(() {
-      time = instance.time; // Update the time variable
+    // Passing the arguments using Navigator.pushReplacemenetNamed
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacementNamed(context, '/home', arguments: {
+      'location': instance.location,
+      'flag': instance.flag,
+      'time': instance.time,
+      'isDayTime': instance.isDayTime,
     });
   }
 
@@ -38,12 +38,16 @@ class _LoadingState extends State<Loading> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return const SafeArea(
       child: Scaffold(
-          body: Padding(
-        padding: const EdgeInsets.all(50.0),
-        child: Text(time),
-      )),
+        backgroundColor: Colors.blue,
+        body: Center(
+          child: SpinKitFoldingCube(
+            color: Colors.white,
+            size: 70.0,
+          ),
+        ),
+      ),
     );
   }
 }
